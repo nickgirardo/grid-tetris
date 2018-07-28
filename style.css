@@ -1,0 +1,15 @@
+
+
+#tetris-container {
+    display: grid;
+    /*
+    grid-template-columns: SET DYNAMICALLY!
+    grid-template-rows: SET DYNAMICALLY!
+    */
+    grid-column-gap: 1px;
+    grid-row-gap: 1px;
+}
+
+.grid-cell {
+    background-color: blue;
+}
