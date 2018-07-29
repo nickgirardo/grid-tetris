@@ -48,7 +48,7 @@
 
 .grid-cell.red {
     background:
-        linear-gradient(var(--red-mid), var(--red-mid)) 50% 50% / 14px 14px,
+        linear-gradient(var(--red-mid), var(--red-mid)) 50% 50% / 52% 52%,
         linear-gradient(-45deg, var(--red-dark) 50%, var(--red-trans) 50%),
         linear-gradient(-45deg, var(--red-trans) 50%, var(--red-light) 50%);
     background-repeat: no-repeat;
@@ -56,7 +56,7 @@
 
 .grid-cell.blue {
     background:
-        linear-gradient(var(--blue-mid), var(--blue-mid)) 50% 50% / 14px 14px,
+        linear-gradient(var(--blue-mid), var(--blue-mid)) 50% 50% / 52% 52%,
         linear-gradient(-45deg, var(--blue-dark) 50%, var(--blue-trans) 50%),
         linear-gradient(-45deg, var(--blue-trans) 50%, var(--blue-light) 50%);
     background-repeat: no-repeat;
@@ -64,7 +64,7 @@
 
 .grid-cell.green {
     background:
-        linear-gradient(var(--green-mid), var(--green-mid)) 50% 50% / 14px 14px,
+        linear-gradient(var(--green-mid), var(--green-mid)) 50% 50% / 52% 52%,
         linear-gradient(-45deg, var(--green-dark) 50%, var(--green-trans) 50%),
         linear-gradient(-45deg, var(--green-trans) 50%, var(--green-light) 50%);
     background-repeat: no-repeat;
@@ -72,7 +72,7 @@
 
 .grid-cell.orange {
     background:
-        linear-gradient(var(--orange-mid), var(--orange-mid)) 50% 50% / 14px 14px,
+        linear-gradient(var(--orange-mid), var(--orange-mid)) 50% 50% / 52% 52%,
         linear-gradient(-45deg, var(--orange-dark) 50%, var(--orange-trans) 50%),
         linear-gradient(-45deg, var(--orange-trans) 50%, var(--orange-light) 50%);
     background-repeat: no-repeat;
@@ -80,7 +80,7 @@
 
 .grid-cell.yellow {
     background:
-        linear-gradient(var(--yellow-mid), var(--yellow-mid)) 50% 50% / 14px 14px,
+        linear-gradient(var(--yellow-mid), var(--yellow-mid)) 50% 50% / 52% 52%,
         linear-gradient(-45deg, var(--yellow-dark) 50%, var(--yellow-trans) 50%),
         linear-gradient(-45deg, var(--yellow-trans) 50%, var(--yellow-light) 50%);
     background-repeat: no-repeat;
@@ -88,7 +88,7 @@
 
 .grid-cell.pink {
     background:
-        linear-gradient(var(--pink-mid), var(--pink-mid)) 50% 50% / 14px 14px,
+        linear-gradient(var(--pink-mid), var(--pink-mid)) 50% 50% / 52% 52%,
         linear-gradient(-45deg, var(--pink-dark) 50%, var(--pink-trans) 50%),
         linear-gradient(-45deg, var(--pink-trans) 50%, var(--pink-light) 50%);
     background-repeat: no-repeat;
@@ -96,7 +96,7 @@
 
 .grid-cell.cyan {
     background:
-        linear-gradient(var(--cyan-mid), var(--cyan-mid)) 50% 50% / 14px 14px,
+        linear-gradient(var(--cyan-mid), var(--cyan-mid)) 50% 50% / 52% 52%,
         linear-gradient(-45deg, var(--cyan-dark) 50%, var(--cyan-trans) 50%),
         linear-gradient(-45deg, var(--cyan-trans) 50%, var(--cyan-light) 50%);
     background-repeat: no-repeat;
