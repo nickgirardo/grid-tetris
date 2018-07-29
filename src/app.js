@@ -36,11 +36,22 @@ function getStyle(selector) {
   return undefined;
 }
 
+const classNames = [
+  'grid-cell red',
+  'grid-cell blue',
+  'grid-cell green',
+  'grid-cell orange',
+  'grid-cell yellow',
+  'grid-cell pink',
+  'grid-cell cyan',
+];
+
 function init() {
 
   for(let i = 0; i<GRID_COLS*GRID_ROWS; i++) {
+    const rand = Math.floor(Math.random()*classNames.length);
     const gridCell = document.createElement('div');
-    gridCell.className = 'grid-cell';
+    gridCell.className = classNames[rand];
     container.appendChild(gridCell);
   }
 

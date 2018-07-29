@@ -1,4 +1,40 @@
 
+:root {
+    --red-dark: #c51c1c;
+    --red-mid: #e02b2b;
+    --red-light: #e44a4a;
+    --red-trans: rgba(224, 43, 43, 0);
+
+    --blue-dark: #0056ad;
+    --blue-mid: #0066CC;
+    --blue-light: #007cf9;
+    --blue-trans: rgba(0, 102, 204, 0);
+
+    --green-dark: #00ad00;
+    --green-mid: #00cc00;
+    --green-light: #00f900;
+    --green-trans: rgba(0, 204, 0, 0);
+
+    --orange-dark: #d85c00;
+    --orange-mid: #ff6d00;
+    --orange-light: #ff8226;
+    --orange-trans: rgba(255, 109, 0, 0);
+
+    --yellow-dark: #d4d412;
+    --yellow-mid: #eaea16;
+    --yellow-light: #efef4e;
+    --yellow-trans: rgba(234, 234, 22, 0);
+
+    --pink-dark: #b81c9a;
+    --pink-mid: #d921c8;
+    --pink-light: #e13fd2;
+    --pink-trans: rgba(217, 33, 200, 0);
+
+    --cyan-dark: #1cb5d8;
+    --cyan-mid: #21d5d9;
+    --cyan-light: #3fdee1;
+    --cyan-trans: rgba(33, 213, 217, 0);
+}
 
 #tetris-container {
     display: grid;
@@ -10,6 +46,58 @@
     grid-row-gap: 1px;
 }
 
-.grid-cell {
-    background-color: blue;
+.grid-cell.red {
+    background:
+        linear-gradient(var(--red-mid), var(--red-mid)) 50% 50% / 14px 14px,
+        linear-gradient(-45deg, var(--red-dark) 50%, var(--red-trans) 50%),
+        linear-gradient(-45deg, var(--red-trans) 50%, var(--red-light) 50%);
+    background-repeat: no-repeat;
+}
+
+.grid-cell.blue {
+    background:
+        linear-gradient(var(--blue-mid), var(--blue-mid)) 50% 50% / 14px 14px,
+        linear-gradient(-45deg, var(--blue-dark) 50%, var(--blue-trans) 50%),
+        linear-gradient(-45deg, var(--blue-trans) 50%, var(--blue-light) 50%);
+    background-repeat: no-repeat;
+}
+
+.grid-cell.green {
+    background:
+        linear-gradient(var(--green-mid), var(--green-mid)) 50% 50% / 14px 14px,
+        linear-gradient(-45deg, var(--green-dark) 50%, var(--green-trans) 50%),
+        linear-gradient(-45deg, var(--green-trans) 50%, var(--green-light) 50%);
+    background-repeat: no-repeat;
+}
+
+.grid-cell.orange {
+    background:
+        linear-gradient(var(--orange-mid), var(--orange-mid)) 50% 50% / 14px 14px,
+        linear-gradient(-45deg, var(--orange-dark) 50%, var(--orange-trans) 50%),
+        linear-gradient(-45deg, var(--orange-trans) 50%, var(--orange-light) 50%);
+    background-repeat: no-repeat;
+}
+
+.grid-cell.yellow {
+    background:
+        linear-gradient(var(--yellow-mid), var(--yellow-mid)) 50% 50% / 14px 14px,
+        linear-gradient(-45deg, var(--yellow-dark) 50%, var(--yellow-trans) 50%),
+        linear-gradient(-45deg, var(--yellow-trans) 50%, var(--yellow-light) 50%);
+    background-repeat: no-repeat;
+}
+
+.grid-cell.pink {
+    background:
+        linear-gradient(var(--pink-mid), var(--pink-mid)) 50% 50% / 14px 14px,
+        linear-gradient(-45deg, var(--pink-dark) 50%, var(--pink-trans) 50%),
+        linear-gradient(-45deg, var(--pink-trans) 50%, var(--pink-light) 50%);
+    background-repeat: no-repeat;
+}
+
+.grid-cell.cyan {
+    background:
+        linear-gradient(var(--cyan-mid), var(--cyan-mid)) 50% 50% / 14px 14px,
+        linear-gradient(-45deg, var(--cyan-dark) 50%, var(--cyan-trans) 50%),
+        linear-gradient(-45deg, var(--cyan-trans) 50%, var(--cyan-light) 50%);
+    background-repeat: no-repeat;
 }
