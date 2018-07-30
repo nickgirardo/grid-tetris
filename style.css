@@ -46,6 +46,10 @@
     grid-row-gap: 1px;
 }
 
+.grid-cell {
+    background-color: black;
+}
+
 .grid-cell.red {
     background:
         linear-gradient(var(--red-mid), var(--red-mid)) 50% 50% / 52% 52%,
