@@ -115,6 +115,22 @@ function update() {
       .every(a=>a));
   }
 
+  function scoreGrid() {
+    const toBeCleared = [];
+    for(let i=0; i<GRID_ROWS; i++) {
+      const row = grid.slice(i*GRID_COLS,i*GRID_COLS+GRID_COLS);
+      if(row.every(a=>a!=0)) {
+        toBeCleared.push(i);
+      }
+    }
+    // TODO score based on number of rows to be cleared
+    // e.g. 4 to be cleared means tetris
+
+    // TODO test this thoroughly
+    grid.splice(toBeCleared[0]*GRID_COLS,toBeCleared.length*GRID_COLS);
+    grid.unshift(...new Array(toBeCleared.length*GRID_COLS).fill(0));
+  }
+
   function canMoveLeft() {
     return (tetrominoPositions()
       .map(p => p%GRID_COLS==0 || grid[p-1])
@@ -174,6 +190,8 @@ function update() {
     } else {
       const type = activePiece.type;
       tetrominoPositions().forEach(t => grid[t] = type+1);
+      // This function checks for completed lines and removes them
+      scoreGrid();
       activePiece = null;
     }
   }
