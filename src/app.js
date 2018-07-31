@@ -1,3 +1,6 @@
+
+import * as Keyboard from "./keyboard.js";
+
 const GRID_COLS = 10;
 const GRID_ROWS = 24;
 const aspectRatio = GRID_COLS/GRID_ROWS;
@@ -8,6 +11,10 @@ const grid = [];
 const cells = [];
 
 let activePiece;
+let lastLeft = 0;
+let lastRight = 0;
+let lastUp = 0;
+let lastDown = 0;
 
 function resize() {
   // Among other things, this method makes sure the game is always 16/9
@@ -57,7 +64,7 @@ const tetrominoes = [
   [[0,1,1,0],[0,1,1,0]],
   [[1,1,1,0],[0,0,1,0]],
   [[1,1,1,0],[0,1,0,0]],
-  [[1,1,1,0],[0,0,1,0]],
+  [[1,1,1,0],[1,0,0,0]],
   [[0,1,1,0],[0,0,1,1]],
   [[0,1,1,0],[1,1,0,0]],
 ]
@@ -73,14 +80,6 @@ function draw() {
   }
 }
 
-function createPiece(type) {
-  activePiece = {
-    type,
-    locX: (GRID_COLS-4)/2,
-    locY: 0,
-    lastFall: 0,
-  }
-}
 
 function tetrominoPositions() {
   const piecePositions = [];
@@ -101,10 +100,31 @@ function tetrominoPositions() {
 }
 
 function update() {
-  draw();
+  function createPiece(type) {
+    activePiece = {
+      type,
+      locX: (GRID_COLS-4)/2,
+      locY: 0,
+      lastFall: 0,
+    }
+  }
 
-  if(!activePiece) {
-    createPiece(Math.floor(Math.random()*tetrominoes.length));
+  function checkGameOver() {
+    return (tetrominoPositions()
+      .map(p => grid[p])
+      .every(a=>a));
+  }
+
+  function canMoveLeft() {
+    return (tetrominoPositions()
+      .map(p => p%GRID_COLS==0 || grid[p-1])
+      .every(a=>!a));
+  }
+
+  function canMoveRight() {
+    return (tetrominoPositions()
+      .map(p => p%GRID_COLS==GRID_COLS-1 || grid[p+1])
+      .every(a=>!a));
   }
 
   function canFall() {
@@ -112,6 +132,37 @@ function update() {
       .map(p => p+GRID_COLS)
       .map(p => p>GRID_ROWS*GRID_COLS || grid[p])
       .every(a=>!a));
+  }
+
+  if(!activePiece) {
+    createPiece(Math.floor(Math.random()*tetrominoes.length));
+    // TODO real game over handling
+    if(checkGameOver())
+      console.log("GAME OVER!!");
+  }
+
+  // Handle input
+  if(Keyboard.keys[65] && Keyboard.timestamps[65] > lastLeft && canMoveLeft()) {
+    lastLeft = Keyboard.timestamps[65];
+    activePiece.locX--;
+  }
+
+  if(Keyboard.keys[68] && Keyboard.timestamps[68] > lastRight && canMoveRight()) {
+    lastRight = Keyboard.timestamps[68];
+    activePiece.locX++;
+  }
+
+  if(Keyboard.keys[87] && Keyboard.timestamps[87] > lastUp) {
+    lastUp = Keyboard.timestamps[87];
+    while(canFall()) {
+      activePiece.locY++;
+    }
+    activePiece.lastFall = Infinity;
+  }
+
+  if(Keyboard.keys[83]) {
+    // TODO Tune this amount to get it feeling right
+    activePiece.lastFall += 20;
   }
 
   // Advance piece
@@ -127,10 +178,13 @@ function update() {
     }
   }
 
+  draw();
   window.requestAnimationFrame(update);
 }
 
 function init() {
+
+  Keyboard.init();
 
   for(let i = 0; i<GRID_COLS*GRID_ROWS; i++) {
     const gridCell = document.createElement('div');
