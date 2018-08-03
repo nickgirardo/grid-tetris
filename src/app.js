@@ -138,46 +138,47 @@ function draw() {
   }
 }
 
+function getRotated(piece, rotation) {
+
+  const rot = rotation || piece.rotation;
+  const unrotated = tetrominoes[piece.type].shape;
+  if(rot === 0)
+    return unrotated;
+
+  const rotations = [1, 0, -1, 0];
+  const cos = rotations[rot];
+  const sin = rotations[rot-1];
+
+  const orX = tetrominoes[piece.type].originX;
+  const orY = tetrominoes[piece.type].originY;
+
+  const arr = [];
+  for (let i=0; i< unrotated.length; i++) {
+    arr.push(new Array(unrotated[i].length).fill(0));
+  }
+
+  for (let i=0; i< unrotated.length; i++) {
+    for (let j=0; j< unrotated[i].length; j++) {
+      if(unrotated[i][j]) {
+        const xcomp = (i - orX);
+        const ycomp = (j - orY);
+        arr[(xcomp*cos) - (ycomp*sin) + orX][(xcomp*sin) + (ycomp*cos) + orY] = 1;
+      }
+    }
+  }
+  return arr;
+
+}
 
 function tetrominoPositions() {
   const piecePositions = [];
-  const piece = tetrominoes[activePiece.type].shape;
-  const rot = activePiece.rotation;
+  const piece = getRotated(activePiece);
   const startX = activePiece.locX;
   const startY = activePiece.locY;
 
-  let arr;
-
-  if(rot === 0) {
-    arr = piece;
-  } else {
-    const orX = tetrominoes[activePiece.type].originX;
-    const orY = tetrominoes[activePiece.type].originY;
-
-    arr = [];
-    for (let i=0; i< piece.length; i++) {
-      arr.push(new Array(piece[i].length).fill(0));
-    }
-    const cos = rot === 1 ? 0 : (rot === 2 ? -1 : 0);
-    const sin = rot === 1 ? 1 : (rot === 2 ? 0 : -1);
-    for (let i=0; i< piece.length; i++) {
-      for (let j=0; j< piece[i].length; j++) {
-        // TODO clean
-        if(piece[i][j]) {
-          const xcomp = (i - orX);
-          const ycomp = (j - orY);
-          const xspot = (xcomp*cos) - (ycomp*sin) + orX;
-          const yspot = (xcomp*sin) + (ycomp*cos) + orY;
-          arr[xspot][yspot] = 1;
-        }
-      }
-    }
-    //arr = piece;
-  }
-
-  for(let i=0; i<arr.length; i++) {
-    for(let j=0; j<arr[i].length; j++) {
-      if(arr[i][j]) {
+  for(let i=0; i<piece.length; i++) {
+    for(let j=0; j<piece[i].length; j++) {
+      if(piece[i][j]) {
         const currCell = (i+startY)*GRID_COLS+(j+startX);
         piecePositions.push(currCell);
       }
@@ -238,6 +239,7 @@ function update() {
       .map(p => p>GRID_ROWS*GRID_COLS || grid[p])
       .every(a=>!a));
   }
+
 
   if(!activePiece) {
     createPiece(Math.floor(Math.random()*tetrominoes.length));
