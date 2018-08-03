@@ -15,6 +15,8 @@ let lastLeft = 0;
 let lastRight = 0;
 let lastUp = 0;
 let lastDown = 0;
+let lastCW = 0;
+let lastCCW = 0;
 
 function resize() {
   // Among other things, this method makes sure the game is always 16/9
@@ -60,13 +62,69 @@ const classNames = [
 ];
 
 const tetrominoes = [
-  [[1,1,1,1],[0,0,0,0]],
-  [[0,1,1,0],[0,1,1,0]],
-  [[1,1,1,0],[0,0,1,0]],
-  [[1,1,1,0],[0,1,0,0]],
-  [[1,1,1,0],[1,0,0,0]],
-  [[0,1,1,0],[0,0,1,1]],
-  [[0,1,1,0],[1,1,0,0]],
+  {
+    shape: [
+      [0,0,0,0],
+      [1,1,1,1],
+      [0,0,0,0],
+      [0,0,0,0],
+    ],
+    originX: 1.5,
+    originY: 1.5,
+  },
+  {
+    shape: [
+      [1,0,0],
+      [1,1,1],
+      [0,0,0],
+    ],
+    originX: 1,
+    originY: 1,
+  },
+  {
+    shape: [
+      [0,0,1],
+      [1,1,1],
+      [0,0,0],
+    ],
+    originX: 1,
+    originY: 1,
+  },
+  {
+    shape: [
+      [1,1],
+      [1,1],
+    ],
+    originX: 0.5,
+    originY: 0.5,
+  },
+  {
+    shape: [
+      [0,1,1],
+      [1,1,0],
+      [0,0,0],
+    ],
+    originX: 1,
+    originY: 1,
+  },
+  {
+    shape: [
+      [0,1,0],
+      [1,1,1],
+      [0,0,0],
+    ],
+    originX: 1,
+    originY: 1,
+  },
+  {
+    shape: [
+      [1,1,0],
+      [0,1,1],
+      [0,0,0],
+    ],
+    originX: 1,
+    originY: 1,
+  },
 ]
 
 function draw() {
@@ -83,13 +141,43 @@ function draw() {
 
 function tetrominoPositions() {
   const piecePositions = [];
-  const piece = tetrominoes[activePiece.type];
+  const piece = tetrominoes[activePiece.type].shape;
+  const rot = activePiece.rotation;
   const startX = activePiece.locX;
   const startY = activePiece.locY;
 
-  for(let i=0; i<piece.length; i++) {
-    for(let j=0; j<piece[i].length; j++) {
-      if(piece[i][j]) {
+  let arr;
+
+  if(rot === 0) {
+    arr = piece;
+  } else {
+    const orX = tetrominoes[activePiece.type].originX;
+    const orY = tetrominoes[activePiece.type].originY;
+
+    arr = [];
+    for (let i=0; i< piece.length; i++) {
+      arr.push(new Array(piece[i].length).fill(0));
+    }
+    const cos = rot === 1 ? 0 : (rot === 2 ? -1 : 0);
+    const sin = rot === 1 ? 1 : (rot === 2 ? 0 : -1);
+    for (let i=0; i< piece.length; i++) {
+      for (let j=0; j< piece[i].length; j++) {
+        // TODO clean
+        if(piece[i][j]) {
+          const xcomp = (i - orX);
+          const ycomp = (j - orY);
+          const xspot = (xcomp*cos) - (ycomp*sin) + orX;
+          const yspot = (xcomp*sin) + (ycomp*cos) + orY;
+          arr[xspot][yspot] = 1;
+        }
+      }
+    }
+    //arr = piece;
+  }
+
+  for(let i=0; i<arr.length; i++) {
+    for(let j=0; j<arr[i].length; j++) {
+      if(arr[i][j]) {
         const currCell = (i+startY)*GRID_COLS+(j+startX);
         piecePositions.push(currCell);
       }
@@ -106,6 +194,7 @@ function update() {
       locX: (GRID_COLS-4)/2,
       locY: 0,
       lastFall: 0,
+      rotation: 0,
     }
   }
 
@@ -158,6 +247,20 @@ function update() {
   }
 
   // Handle input
+  // Rotation -> Movement -> Gravity
+
+  if(Keyboard.keys[74] && Keyboard.timestamps[74] > lastCCW) {
+    lastCCW = Keyboard.timestamps[74];
+    activePiece.rotation += 3;
+    activePiece.rotation %= 4;
+  }
+
+  if(Keyboard.keys[75] && Keyboard.timestamps[75] > lastCW) {
+    lastCW = Keyboard.timestamps[75];
+    activePiece.rotation++;
+    activePiece.rotation %= 4;
+  }
+
   if(Keyboard.keys[65] && Keyboard.timestamps[65] > lastLeft && canMoveLeft()) {
     lastLeft = Keyboard.timestamps[65];
     activePiece.locX--;
