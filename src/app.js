@@ -134,20 +134,19 @@ function draw() {
 
   if(activePiece) {
     const type = activePiece.type;
-    tetrominoPositions().forEach(t => cells[t].className = classNames[type+1]);
+    tetrominoPositions(activePiece).forEach(t => cells[t].className = classNames[type+1]);
   }
 }
 
 function getRotated(piece, rotation) {
 
-  const rot = rotation || piece.rotation;
   const unrotated = tetrominoes[piece.type].shape;
-  if(rot === 0)
+  if(rotation === 0)
     return unrotated;
 
   const rotations = [1, 0, -1, 0];
-  const cos = rotations[rot];
-  const sin = rotations[rot-1];
+  const cos = rotations[rotation];
+  const sin = rotations[rotation-1];
 
   const orX = tetrominoes[piece.type].originX;
   const orY = tetrominoes[piece.type].originY;
@@ -170,11 +169,11 @@ function getRotated(piece, rotation) {
 
 }
 
-function tetrominoPositions() {
+function tetrominoPositions(tetromino) {
   const piecePositions = [];
-  const piece = getRotated(activePiece);
-  const startX = activePiece.locX;
-  const startY = activePiece.locY;
+  const piece = getRotated(tetromino, tetromino.rotation);
+  const startX = tetromino.locX;
+  const startY = tetromino.locY;
 
   for(let i=0; i<piece.length; i++) {
     for(let j=0; j<piece[i].length; j++) {
@@ -190,7 +189,7 @@ function tetrominoPositions() {
 
 function update() {
   function createPiece(type) {
-    activePiece = {
+    return {
       type,
       locX: (GRID_COLS-4)/2,
       locY: 0,
@@ -200,41 +199,39 @@ function update() {
   }
 
   function checkGameOver() {
-    return (tetrominoPositions()
+    return (tetrominoPositions(activePiece)
       .map(p => grid[p])
       .every(a=>a));
   }
 
   function scoreGrid() {
-    const toBeCleared = [];
+    let rowsCleared = 0;
     for(let i=0; i<GRID_ROWS; i++) {
       const row = grid.slice(i*GRID_COLS,i*GRID_COLS+GRID_COLS);
       if(row.every(a=>a!=0)) {
-        toBeCleared.push(i);
+        grid.splice(i*GRID_COLS, GRID_COLS);
+        grid.unshift(...new Array(GRID_COLS).fill(0));
+        rowsCleared++;
       }
     }
-    // TODO score based on number of rows to be cleared
-    // e.g. 4 to be cleared means tetris
 
-    // TODO test this thoroughly
-    grid.splice(toBeCleared[0]*GRID_COLS,toBeCleared.length*GRID_COLS);
-    grid.unshift(...new Array(toBeCleared.length*GRID_COLS).fill(0));
+    return rowsCleared;
   }
 
   function canMoveLeft() {
-    return (tetrominoPositions()
+    return (tetrominoPositions(activePiece)
       .map(p => p%GRID_COLS==0 || grid[p-1])
       .every(a=>!a));
   }
 
   function canMoveRight() {
-    return (tetrominoPositions()
+    return (tetrominoPositions(activePiece)
       .map(p => p%GRID_COLS==GRID_COLS-1 || grid[p+1])
       .every(a=>!a));
   }
 
   function canFall() {
-    return (tetrominoPositions()
+    return (tetrominoPositions(activePiece)
       .map(p => p+GRID_COLS)
       .map(p => p>GRID_ROWS*GRID_COLS || grid[p])
       .every(a=>!a));
@@ -242,7 +239,7 @@ function update() {
 
 
   if(!activePiece) {
-    createPiece(Math.floor(Math.random()*tetrominoes.length));
+    activePiece = createPiece(Math.floor(Math.random()*tetrominoes.length));
     // TODO real game over handling
     if(checkGameOver())
       console.log("GAME OVER!!");
@@ -294,9 +291,11 @@ function update() {
       activePiece.locY++;
     } else {
       const type = activePiece.type;
-      tetrominoPositions().forEach(t => grid[t] = type+1);
+      tetrominoPositions(activePiece).forEach(t => grid[t] = type+1);
       // This function checks for completed lines and removes them
-      scoreGrid();
+      const rowsCleared = scoreGrid();
+      if(rowsCleared)
+        console.log(`Nice! You just cleared ${rowsCleared} row${rowsCleared === 1 ? '' : 's'}!`);
       activePiece = null;
     }
   }
