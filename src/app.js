@@ -384,8 +384,30 @@ function update() {
   window.requestAnimationFrame(update);
 }
 
+function handleError(msg, url, row, col, obj) {
+  const handlerDiv = document.querySelector('#error-handler');
+  const errorMsg = document.querySelector('#error-message');
+
+  Keyboard.stop();
+  handlerDiv.style.display = "block"
+
+  if(!!obj && !!obj.stack) {
+    const stack = obj.stack.split('\n').map(str=>'\t'+str).join('\n');
+    const fullMsg = `${obj.name}: ${obj.message}\n${stack}`;
+    console.error(fullMsg);
+    errorMsg.innerText = fullMsg;
+  } else {
+    // Not all browsers have access to obj and obj.stack
+    // Although since we rely on css grid this probably won't help much
+    const fallbackMsg = `${msg}\n\t${url}:${row}:${col}\n\t(fallback error handler)`;
+    console.error(fallbackMsg);
+    errorMsg.innerText = fallbackMsg;
+  }
+}
+
 function init() {
 
+  window.onerror = handleError;
   Keyboard.init();
 
   for(let i = 0; i<GRID_COLS*GRID_ROWS; i++) {

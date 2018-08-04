@@ -1,4 +1,18 @@
 
+#error-handler {
+    background-color: blue;
+    color: white;
+    padding: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: none;
+
+}
+
 :root {
     --red-dark: #c51c1c;
     --red-mid: #e02b2b;

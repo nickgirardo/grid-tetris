@@ -9,6 +9,11 @@ export function init() {
   document.addEventListener("keyup", keyup);
 }
 
+export function stop() {
+  document.removeEventListener("keydown", keydown);
+  document.removeEventListener("keyup", keyup);
+}
+
 function keydown(e) {
   const key = e.keyCode;
 
