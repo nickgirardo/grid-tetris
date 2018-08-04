@@ -134,7 +134,9 @@ function draw() {
 
   if(activePiece) {
     const type = activePiece.type;
-    tetrominoPositions(activePiece).forEach(t => cells[t].className = classNames[type+1]);
+    (tetrominoPositions(activePiece)
+      .filter(p => p >= 0 && p < GRID_ROWS*GRID_COLS)
+      .forEach(t => cells[t].className = classNames[type+1]));
   }
 }
 
@@ -301,7 +303,7 @@ function update() {
   function canFall() {
     return (tetrominoPositions(activePiece)
       .map(p => p+GRID_COLS)
-      .map(p => p>GRID_ROWS*GRID_COLS || grid[p])
+      .map(p => p>=GRID_ROWS*GRID_COLS || grid[p])
       .every(a=>!a));
   }
 
