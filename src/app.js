@@ -188,13 +188,13 @@ function tetrominoPositions(tetromino) {
 }
 
 function update() {
-  function createPiece(type) {
+  function createPiece(type, locX=(GRID_COLS-4)/2, locY=0, rotation=0) {
     return {
       type,
-      locX: (GRID_COLS-4)/2,
-      locY: 0,
+      locX,
+      locY,
+      rotation,
       lastFall: 0,
-      rotation: 0,
     }
   }
 
@@ -216,6 +216,74 @@ function update() {
     }
 
     return rowsCleared;
+  }
+
+  function canRotCW() {
+    // All pieces except I
+    const wallKick = [
+      [[0,0], [-1,0], [-1,-1], [0,2], [-1,2]],
+      [[0,0], [-1,0], [-1,1], [0,-2], [-1,-2]],
+      [[0,0], [1,0], [1,-1], [0,2], [1,2]],
+      [[0,0], [1,0], [1,1], [0,-2], [1,-2]],
+    ];
+
+    // For I only
+    const wallKickI = [
+      [[0,0], [1,0], [-2,0], [1,-2], [-2,1]],
+      [[0,0], [-2,0], [1,0], [-2,-1], [1,2]],
+      [[0,0], [-1,0], [2,0], [-1,2], [2,-1]],
+      [[0,0], [2,0], [-1,0], [2,1], [-1,-2]],
+    ];
+
+    const targetRot = (activePiece.rotation+3)%4;
+    const kickArr = activePiece.type === 0 ? wallKickI : wallKick;
+
+    return canRotate(targetRot, kickArr);
+  }
+
+  function canRotCCW() {
+    const wallKick = [
+      [[0,0], [1,0], [1,-1], [0,2], [1,2]],
+      [[0,0], [-1,0], [-1,1], [0,-2], [-1,-2]],
+      [[0,0], [-1,0], [-1,-1], [0,2], [-1,2]],
+      [[0,0], [1,0], [1,1], [0,-2], [1,-2]],
+    ];
+
+    const wallKickI = [
+      [[0,0], [2,0], [-1,0], [2,1], [-1,-2]],
+      [[0,0], [1,0], [-2,0], [1,-2], [-2,1]],
+      [[0,0], [-2,0], [1,0], [-2,-1], [1,2]],
+      [[0,0], [-1,0], [2,0], [-1,2], [2,-1]],
+    ];
+
+    const targetRot = (activePiece.rotation+1)%4;
+    const kickArr = activePiece.type === 0 ? wallKickI : wallKick;
+
+    return canRotate(targetRot, kickArr);
+  }
+
+  function canRotate(targetRot, kickArr) {
+    function test(testPiece) {
+      const pos = tetrominoPositions(testPiece);
+      const xPos = pos.map(p=>p%GRID_COLS);
+      return (pos.map(p => p>GRID_ROWS*GRID_COLS || grid[p]).every(a => !a)
+        && !(xPos.includes(0) && xPos.includes(GRID_COLS-1)));
+    }
+
+    const kickRow = kickArr[targetRot];
+    for(let i=0; i<kickRow.length; i++) {
+      const [xKick, yKick] = kickRow[i];
+      const piece = createPiece(activePiece.type,
+        activePiece.locX+xKick,
+        activePiece.locY+yKick,
+        targetRot);
+      if(test(piece))
+        return [true, kickRow[i]];
+    }
+
+    // The inner array here could be anything
+    return [false, [0,0]];
+
   }
 
   function canMoveLeft() {
@@ -248,16 +316,26 @@ function update() {
   // Handle input
   // Rotation -> Movement -> Gravity
 
-  if(Keyboard.keys[74] && Keyboard.timestamps[74] > lastCCW) {
-    lastCCW = Keyboard.timestamps[74];
-    activePiece.rotation += 3;
-    activePiece.rotation %= 4;
+  if(Keyboard.keys[74] && Keyboard.timestamps[74] > lastCW) {
+    lastCW = Keyboard.timestamps[74];
+    const [canRot, [xKick, yKick]] = canRotCW();
+    if(canRot) {
+      activePiece.locX += xKick;
+      activePiece.locY += yKick;
+      activePiece.rotation += 3;
+      activePiece.rotation %= 4;
+    }
   }
 
-  if(Keyboard.keys[75] && Keyboard.timestamps[75] > lastCW) {
-    lastCW = Keyboard.timestamps[75];
-    activePiece.rotation++;
-    activePiece.rotation %= 4;
+  if(Keyboard.keys[75] && Keyboard.timestamps[75] > lastCCW) {
+    lastCCW = Keyboard.timestamps[75];
+    const [canRot, [xKick, yKick]] = canRotCCW();
+    if(canRot) {
+      activePiece.locX += xKick;
+      activePiece.locY += yKick;
+      activePiece.rotation++;
+      activePiece.rotation %= 4;
+    }
   }
 
   if(Keyboard.keys[65] && Keyboard.timestamps[65] > lastLeft && canMoveLeft()) {
