@@ -175,17 +175,40 @@ function tetrominoPositions(tetromino) {
   return piecePositions;
 }
 
-function update() {
-  function createPiece(type, locX=(GRID_COLS-4)/2, locY=0, rotation=0) {
-    return {
-      type,
-      locX,
-      locY,
-      rotation,
-      lastFall: 0,
+const createRandomPiece = (() => {
+  // Fisher-Yates
+  // TODO this could be moved
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
+    return arr;
   }
 
+  const defaultBag = [0,1,2,3,4,5,6];
+  let currentBag = [];
+
+  return ((locX=(GRID_COLS-4)/2, locY=0, rotation=0) => {
+    if(currentBag.length === 0) {
+      currentBag = [...defaultBag];
+      shuffle(currentBag);
+    }
+    return createPiece(currentBag.pop(), locX, locY, rotation);
+  });
+})();
+
+function createPiece(type, locX=(GRID_COLS-4)/2, locY=0, rotation=0) {
+  return {
+    type,
+    locX,
+    locY,
+    rotation,
+    lastFall: 0,
+  }
+}
+
+function update() {
   function checkGameOver() {
     return (tetrominoPositions(activePiece)
       .map(p => grid[p])
@@ -295,7 +318,7 @@ function update() {
 
 
   if(!activePiece) {
-    activePiece = createPiece(Math.floor(Math.random()*tetrominoes.length));
+    activePiece = createRandomPiece();
     // TODO real game over handling
     if(checkGameOver())
       console.log("GAME OVER!!");
