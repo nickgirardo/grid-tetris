@@ -52,12 +52,12 @@
 
 #tetris-container {
     display: grid;
-    /*
-    grid-template-columns: SET DYNAMICALLY!
-    grid-template-rows: SET DYNAMICALLY!
-    */
     grid-column-gap: 1px;
     grid-row-gap: 1px;
+
+    /* Should be overwritten dynamically */
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(24, 1fr);
 }
 
 .grid-cell {

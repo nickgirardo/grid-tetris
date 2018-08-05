@@ -36,20 +36,6 @@ function resize() {
   };
 }
 
-// Get a reference to a style defined in a loaded stylesheet
-function getStyle(selector) {
-  for(let i = 0; i<document.styleSheets.length; i++) {
-    const rules = document.styleSheets[i].cssRules;
-    for(let j = 0; rules.length; j++) {
-      if(rules[j].selectorText === selector)
-        return rules[j];
-    }
-  }
-
-  // Not found
-  return undefined;
-}
-
 const classNames = [
   'grid-cell',
   'grid-cell cyan',
@@ -419,9 +405,9 @@ function init() {
   }
   cells.push(...Array.from(document.querySelectorAll('.grid-cell')));
 
-  const containerStyle = getStyle('#tetris-container')
-  containerStyle.style.setProperty('grid-template-columns', `repeat(${GRID_COLS}, 1fr)`);
-  containerStyle.style.setProperty('grid-template-rows', `repeat(${GRID_ROWS}, 1fr)`);
+  const containerEl = document.querySelector('#tetris-container');
+  containerEl.style.setProperty('grid-template-columns', `repeat(${GRID_COLS}, 1fr)`);
+  containerEl.style.setProperty('grid-template-rows', `repeat(${GRID_ROWS}, 1fr)`);
 
   resize();
   window.addEventListener('resize', resize);
