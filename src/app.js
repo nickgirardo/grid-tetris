@@ -52,13 +52,13 @@ function getStyle(selector) {
 
 const classNames = [
   'grid-cell',
-  'grid-cell red',
+  'grid-cell cyan',
   'grid-cell blue',
-  'grid-cell green',
   'grid-cell orange',
   'grid-cell yellow',
+  'grid-cell green',
   'grid-cell pink',
-  'grid-cell cyan',
+  'grid-cell red',
 ];
 
 const tetrominoes = [
