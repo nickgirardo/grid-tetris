@@ -57,6 +57,7 @@ const tetrominoes = [
     ],
     originX: 1.5,
     originY: 1.5,
+    className: 'grid-cell cyan',
   },
   {
     shape: [
@@ -66,6 +67,7 @@ const tetrominoes = [
     ],
     originX: 1,
     originY: 1,
+    className: 'grid-cell blue',
   },
   {
     shape: [
@@ -75,6 +77,7 @@ const tetrominoes = [
     ],
     originX: 1,
     originY: 1,
+    className: 'grid-cell orange',
   },
   {
     shape: [
@@ -83,6 +86,7 @@ const tetrominoes = [
     ],
     originX: 0.5,
     originY: 0.5,
+    className: 'grid-cell yellow',
   },
   {
     shape: [
@@ -92,6 +96,7 @@ const tetrominoes = [
     ],
     originX: 1,
     originY: 1,
+    className: 'grid-cell green',
   },
   {
     shape: [
@@ -101,6 +106,7 @@ const tetrominoes = [
     ],
     originX: 1,
     originY: 1,
+    className: 'grid-cell pink',
   },
   {
     shape: [
@@ -110,6 +116,7 @@ const tetrominoes = [
     ],
     originX: 1,
     originY: 1,
+    className: 'grid-cell red',
   },
 ]
 
@@ -119,10 +126,10 @@ function draw() {
   });
 
   if(activePiece) {
-    const type = activePiece.type;
+    const className = tetrominoes[activePiece.type].className;
     (tetrominoPositions(activePiece)
       .filter(p => p >= 0 && p < GRID_ROWS*GRID_COLS)
-      .forEach(t => cells[t].className = classNames[type+1]));
+      .forEach(t => cells[t].className = className));
   }
 }
 
