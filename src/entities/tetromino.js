@@ -10,7 +10,7 @@ export default class Tetromino {
     this.field = field;
     this.type = type;
 
-    this.positions = tetrominoData[type].shapeVec;
+    this.positions = tetrominoData[type].shape;
     this.origin = tetrominoData[type].origin;
     this.className = tetrominoData[type].className;
 

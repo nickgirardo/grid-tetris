@@ -37,12 +37,6 @@ const wallKickCCWI = [
 export default [
   {
     shape: [
-      [0,0,0,0],
-      [1,1,1,1],
-      [0,0,0,0],
-      [0,0,0,0],
-    ],
-    shapeVec: [
       {x: 0, y: 1},
       {x: 1, y: 1},
       {x: 2, y: 1},
@@ -55,11 +49,6 @@ export default [
   },
   {
     shape: [
-      [1,0,0],
-      [1,1,1],
-      [0,0,0],
-    ],
-    shapeVec: [
       {x: 0, y: 0},
       {x: 0, y: 1},
       {x: 1, y: 1},
@@ -72,11 +61,6 @@ export default [
   },
   {
     shape: [
-      [0,0,1],
-      [1,1,1],
-      [0,0,0],
-    ],
-    shapeVec: [
       {x: 2, y: 0},
       {x: 0, y: 1},
       {x: 1, y: 1},
@@ -89,10 +73,6 @@ export default [
   },
   {
     shape: [
-      [1,1],
-      [1,1],
-    ],
-    shapeVec: [
       {x: 0, y: 0},
       {x: 1, y: 0},
       {x: 0, y: 1},
@@ -105,11 +85,6 @@ export default [
   },
   {
     shape: [
-      [0,1,1],
-      [1,1,0],
-      [0,0,0],
-    ],
-    shapeVec: [
       {x: 1, y: 0},
       {x: 2, y: 0},
       {x: 0, y: 1},
@@ -122,11 +97,6 @@ export default [
   },
   {
     shape: [
-      [0,1,0],
-      [1,1,1],
-      [0,0,0],
-    ],
-    shapeVec: [
       {x: 1, y: 0},
       {x: 0, y: 1},
       {x: 1, y: 1},
@@ -139,11 +109,6 @@ export default [
   },
   {
     shape: [
-      [1,1,0],
-      [0,1,1],
-      [0,0,0],
-    ],
-    shapeVec: [
       {x: 0, y: 0},
       {x: 1, y: 0},
       {x: 1, y: 1},
