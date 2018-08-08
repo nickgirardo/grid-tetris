@@ -45,7 +45,7 @@ export default class Manager {
   }
 
   draw(domGrid, gridWidth) {
-    this.field.draw(domGrid, gridWidth);
-    this.tetromino.draw(domGrid, gridWidth);
+    this.field.draw(domGrid, gridWidth, 2, 2);
+    this.tetromino.draw(domGrid, gridWidth, 2, 2);
   }
 }

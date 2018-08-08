@@ -2,18 +2,20 @@
 import * as Keyboard from "./keyboard.js";
 import Manager from "./entities/manager.js";
 
-const GRID_COLS = 10;
-const GRID_ROWS = 24;
-const aspectRatio = GRID_COLS/GRID_ROWS;
+const FIELD_WIDTH = 10;
+const FIELD_HEIGHT = 24;
+
+let GRID_WIDTH = FIELD_WIDTH + 4;
+let GRID_HEIGHT = FIELD_HEIGHT + 4;
 
 const container = document.querySelector('#tetris-container');
 
 const manager = new Manager();
-const cells = [];
+let cells = [];
 
 function draw() {
   // TODO
-  manager.draw(cells, GRID_COLS);
+  manager.draw(cells, GRID_WIDTH);
 }
 
 function update() {
@@ -24,21 +26,35 @@ function update() {
 }
 
 function resize() {
-  // Among other things, this method makes sure the game is always 16/9
-  const scaleFactor = 0.9;
+  let windowAspectRatio = window.innerWidth/ window.innerHeight;
 
-  let wWidth = window.innerWidth;
-  let wHeight = window.innerHeight;
+  container.style.width = window.innerWidth;
+  container.style.height = window.innerHeight;
 
-  let windowAspectRatio = wWidth/ wHeight;
+  const newGridWidth = Math.ceil(GRID_HEIGHT * windowAspectRatio);
 
-  if(windowAspectRatio > aspectRatio) {
-    container.style.width = wHeight * aspectRatio * scaleFactor;
-    container.style.height = wHeight * scaleFactor;
-  } else {
-    container.style.width = wWidth * scaleFactor;
-    container.style.height = wWidth / aspectRatio * scaleFactor;
-  };
+  // On resize, avoid rebuilding the dom if we don't need to
+  if(newGridWidth !== GRID_WIDTH) {
+    GRID_WIDTH = newGridWidth;
+
+    const containerEl = document.querySelector('#tetris-container');
+    // TODO probably don't need to remove all nodes, just do the difference
+    while(containerEl.firstChild) {
+      containerEl.removeChild(containerEl.firstChild);
+    }
+
+    containerEl.style.setProperty('grid-template-columns', `repeat(${GRID_WIDTH}, 1fr)`);
+    containerEl.style.setProperty('grid-template-rows', `repeat(${GRID_HEIGHT}, 1fr)`);
+
+    for(let i = 0; i<GRID_WIDTH*GRID_HEIGHT; i++) {
+      const gridCell = document.createElement('div');
+      gridCell.className = 'grid-cell grey';
+      container.appendChild(gridCell);
+    }
+    cells = Array.from(document.querySelectorAll('.grid-cell'));
+  }
+
+  draw();
 }
 
 function handleError(msg, url, row, col, obj) {
@@ -66,17 +82,6 @@ function init() {
 
   window.onerror = handleError;
   Keyboard.init();
-
-  const containerEl = document.querySelector('#tetris-container');
-  containerEl.style.setProperty('grid-template-columns', `repeat(${GRID_COLS}, 1fr)`);
-  containerEl.style.setProperty('grid-template-rows', `repeat(${GRID_ROWS}, 1fr)`);
-
-  for(let i = 0; i<GRID_COLS*GRID_ROWS; i++) {
-    const gridCell = document.createElement('div');
-    gridCell.className = 'grid-cell';
-    container.appendChild(gridCell);
-  }
-  cells.push(...Array.from(document.querySelectorAll('.grid-cell')));
 
   resize();
   window.addEventListener('resize', resize);

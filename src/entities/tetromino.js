@@ -159,7 +159,7 @@ export default class Tetromino {
 
   draw(domGrid, gridWidth, offsetX=0, offsetY=0) {
     this.positions.forEach(p => {
-      const drawTarget = p.y*(gridWidth+offsetY) + offsetX + p.x;
+      const drawTarget = (p.y+offsetY)*gridWidth + offsetX + p.x;
       if(0 <= drawTarget && drawTarget < domGrid.length)
         domGrid[drawTarget].className = this.className;
     });

@@ -41,7 +41,7 @@ export default class field {
   draw(domGrid, gridWidth, offsetX=0, offsetY=0) {
     for(let i = 0; i<this.height; i++) {
       for(let j = 0; j<this.width; j++) {
-        domGrid[i*(gridWidth+offsetY) + offsetX + j].className = gridClassNames[this.grid[i][j]];
+        domGrid[(i+offsetY)*gridWidth + offsetX + j].className = gridClassNames[this.grid[i][j]];
       }
     }
   }
