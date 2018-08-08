@@ -48,6 +48,11 @@
     --cyan-mid: #21d5d9;
     --cyan-light: #3fdee1;
     --cyan-trans: rgba(33, 213, 217, 0);
+
+    --grey-dark: #4c4c4c;
+    --grey-mid: #606060;
+    --grey-light: #7f7f7f;
+    --grey-trans: rgba(96, 96, 96, 0);
 }
 
 #tetris-container {
@@ -117,5 +122,13 @@
         linear-gradient(var(--cyan-mid), var(--cyan-mid)) 50% 50% / 52% 52%,
         linear-gradient(-45deg, var(--cyan-dark) 50%, var(--cyan-trans) 50%),
         linear-gradient(-45deg, var(--cyan-trans) 50%, var(--cyan-light) 50%);
+    background-repeat: no-repeat;
+}
+
+.grid-cell.grey {
+    background:
+        linear-gradient(var(--grey-mid), var(--grey-mid)) 50% 50% / 52% 52%,
+        linear-gradient(-45deg, var(--grey-dark) 50%, var(--grey-trans) 50%),
+        linear-gradient(-45deg, var(--grey-trans) 50%, var(--grey-light) 50%);
     background-repeat: no-repeat;
 }
