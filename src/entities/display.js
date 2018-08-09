@@ -11,9 +11,18 @@ export default class TetrominoDisplay {
     this.classNameBg = 'grid-cell';
 
     this.type = type;
-    // TODO center
     this.positions = tetrominoData[type].shape;
     this.className = tetrominoData[type].className;
+
+    this.center(tetrominoData[type].origin);
+  }
+
+  center(origin) {
+    this.shift(Math.floor(this.width/2 - origin.x), Math.floor(this.height/2 - origin.y));
+  }
+
+  shift(xShift, yShift) {
+    this.positions = this.positions.map(p => ({x: p.x+xShift, y: p.y+yShift}));
   }
 
   draw(domGrid, gridWidth, offsetX=0, offsetY=0) {
