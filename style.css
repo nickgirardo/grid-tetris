@@ -79,6 +79,7 @@ body {
 
 .grid-cell {
     background-color: black;
+    color: white;
 }
 
 .grid-cell.red {

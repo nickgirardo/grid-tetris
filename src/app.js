@@ -13,8 +13,12 @@ const container = document.querySelector('#tetris-container');
 const manager = new Manager();
 let cells = [];
 
+function forceRedraw() {
+  manager.forceRedraw();
+  draw();
+}
+
 function draw() {
-  // TODO
   manager.draw(cells, GRID_WIDTH);
 }
 
@@ -43,18 +47,21 @@ function resize() {
       containerEl.removeChild(containerEl.firstChild);
     }
 
-    containerEl.style.setProperty('grid-template-columns', `repeat(${GRID_WIDTH}, 1fr)`);
-    containerEl.style.setProperty('grid-template-rows', `repeat(${GRID_HEIGHT}, 1fr)`);
-
     for(let i = 0; i<GRID_WIDTH*GRID_HEIGHT; i++) {
       const gridCell = document.createElement('div');
       gridCell.className = 'grid-cell grey';
       container.appendChild(gridCell);
     }
+
     cells = Array.from(document.querySelectorAll('.grid-cell'));
+
+    containerEl.style.setProperty('grid-template-columns', `repeat(${GRID_WIDTH}, 1fr)`);
+    containerEl.style.setProperty('grid-template-rows', `repeat(${GRID_HEIGHT}, 1fr)`);
+    // TODO explain this line
+    containerEl.style.setProperty('font-size', `${cells[0].offsetWidth-1}px`);
   }
 
-  draw();
+  forceRedraw();
 }
 
 function handleError(msg, url, row, col, obj) {

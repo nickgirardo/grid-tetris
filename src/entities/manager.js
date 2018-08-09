@@ -73,6 +73,11 @@ export default class Manager {
     this.justHeld = true;
   }
 
+  forceRedraw() {
+    this.next.redraw = true;
+    this.hold.redraw = true;
+  }
+
   draw(domGrid, gridWidth) {
     // TODO way too many magic numbers
     this.field.draw(domGrid, gridWidth, 2, 2);
