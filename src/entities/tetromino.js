@@ -41,6 +41,8 @@ export default class Tetromino {
     this.lastDown = Keyboard.timestamps[83] || Date.now();
     this.lastCW = Keyboard.timestamps[74] || Date.now();
     this.lastCCW = Keyboard.timestamps[75] || Date.now();
+
+    this.center();
   }
 
   center() {
@@ -108,6 +110,11 @@ export default class Tetromino {
   }
 
   update() {
+
+    // Attempts to swap with held piece
+    // Will fail if a piece has just been held
+    if(Keyboard.keys[32])
+      this.manager.tetrominoHold();
 
     if(Keyboard.keys[75] && Keyboard.timestamps[75] > this.lastCW) {
       this.lastCW = Keyboard.timestamps[75];
