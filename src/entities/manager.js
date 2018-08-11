@@ -3,6 +3,7 @@ import Tetromino from "./tetromino.js";
 import Field from "./field.js";
 import TetrominoDisplay from "./display.js";
 import EmptyDisplay from "./emptyDisplay.js";
+import Label from "./label.js";
 
 export default class Manager {
 
@@ -33,6 +34,9 @@ export default class Manager {
 
     this.next = new TetrominoDisplay(this.randFromBag());
     this.hold = new EmptyDisplay(); // Game starts with no pieces held
+
+    this.nextLabel = new Label('NEXT', 5);
+    this.holdLabel = new Label('HOLD', 5);
 
     // TODO not hardcoded
     this.field = new Field(10, 24);
@@ -76,13 +80,25 @@ export default class Manager {
   forceRedraw() {
     this.next.redraw = true;
     this.hold.redraw = true;
+    this.nextLabel.redraw = true;
+    this.holdLabel.redraw = true;
   }
 
   draw(domGrid, gridWidth) {
+    const singlePad = 1;
+    const dblPad = 2;
+
+    const startX = dblPad;
+    const fieldX = startX;
+    const uiX = fieldX + this.field.width + dblPad;
+
     // TODO way too many magic numbers
-    this.field.draw(domGrid, gridWidth, 2, 2);
-    this.tetromino.draw(domGrid, gridWidth, 2, 2);
-    this.next.draw(domGrid, gridWidth, 2+this.field.width+2, 2)
-    this.hold.draw(domGrid, gridWidth, 2+this.field.width+2, 2+this.next.height+2)
+    this.field.draw(domGrid, gridWidth, fieldX, dblPad);
+    this.tetromino.draw(domGrid, gridWidth, fieldX, dblPad);
+
+    this.nextLabel.draw(domGrid, gridWidth, uiX, dblPad);
+    this.next.draw(domGrid, gridWidth, uiX, dblPad+this.nextLabel.height+singlePad);
+    this.holdLabel.draw(domGrid, gridWidth, uiX, dblPad+this.nextLabel.height+singlePad+this.next.height+dblPad)
+    this.hold.draw(domGrid, gridWidth, uiX, dblPad+dblPad+this.next.height+dblPad+this.holdLabel.height+singlePad)
   }
 }

@@ -78,8 +78,11 @@ body {
 }
 
 .grid-cell {
+    overflow: hidden;
     background-color: black;
     color: white;
+    /* TODO get better typeface */
+    font-family: 'Rubik Mono One';font-size: 22px;
 }
 
 .grid-cell.red {

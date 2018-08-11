@@ -7,8 +7,8 @@ export default class TetrominoDisplay {
     this.isEmpty = false;
     this.redraw = true;
 
-    this.width = 4;
-    this.height = 4;
+    this.width = 5;
+    this.height = 5;
     this.classNameBg = 'grid-cell';
 
     this.type = type;
