@@ -38,6 +38,14 @@ export default class Manager {
     this.nextLabel = new Label('NEXT', 5);
     this.holdLabel = new Label('HOLD', 5);
 
+    this.lines = 0;
+    this.linesLabel = new Label('LINES', 5);
+    this.linesDisplay = new Label(this.lines.toString(), 5);
+
+    this.score = 0;
+    this.scoreLabel = new Label('SCORE', 5);
+    this.scoreDisplay = new Label(this.score.toString(), 5);
+
     // TODO not hardcoded
     this.field = new Field(10, 24);
     this.tetromino = new Tetromino(this, this.field, this.randFromBag());
@@ -52,7 +60,16 @@ export default class Manager {
     this.justHeld = false;
 
     this.field.addTetromino(tetromino);
-    this.field.score();
+    const linesCleared = this.field.score();
+
+    if(linesCleared) {
+      this.lines += linesCleared;
+      this.linesDisplay = new Label(this.lines.toString(), 5);
+
+      const scoreIncrease = [0, 100, 200, 400, 600];
+      this.score += scoreIncrease[linesCleared];
+      this.scoreDisplay = new Label(this.score.toString(), 5);
+    }
 
     this.tetromino = new Tetromino(this, this.field, this.next.type);
 
@@ -85,20 +102,29 @@ export default class Manager {
   }
 
   draw(domGrid, gridWidth) {
+    const center = Math.floor(gridWidth / 2);
+    const halfFieldWidth = Math.floor(this.field.width / 2);
+    const fieldX = center - halfFieldWidth;
     const singlePad = 1;
     const dblPad = 2;
 
     const startX = dblPad;
-    const fieldX = startX;
-    const uiX = fieldX + this.field.width + dblPad;
+    //const fieldX = startX;
+    const rightX = center + halfFieldWidth + dblPad;
+    const leftX = center - halfFieldWidth - dblPad - 5;
 
     // TODO way too many magic numbers
     this.field.draw(domGrid, gridWidth, fieldX, dblPad);
     this.tetromino.draw(domGrid, gridWidth, fieldX, dblPad);
 
-    this.nextLabel.draw(domGrid, gridWidth, uiX, dblPad);
-    this.next.draw(domGrid, gridWidth, uiX, dblPad+this.nextLabel.height+singlePad);
-    this.holdLabel.draw(domGrid, gridWidth, uiX, dblPad+this.nextLabel.height+singlePad+this.next.height+dblPad)
-    this.hold.draw(domGrid, gridWidth, uiX, dblPad+dblPad+this.next.height+dblPad+this.holdLabel.height+singlePad)
+    this.scoreLabel.draw(domGrid, gridWidth, rightX, dblPad);
+    this.scoreDisplay.draw(domGrid, gridWidth, rightX, dblPad + singlePad);
+    this.nextLabel.draw(domGrid, gridWidth, rightX, dblPad*2 + singlePad);
+    this.next.draw(domGrid, gridWidth, rightX, dblPad*3 + singlePad);
+
+    this.linesLabel.draw(domGrid, gridWidth, leftX, dblPad);
+    this.linesDisplay.draw(domGrid, gridWidth, leftX, dblPad + singlePad);
+    this.holdLabel.draw(domGrid, gridWidth, leftX, dblPad*2 + singlePad)
+    this.hold.draw(domGrid, gridWidth, leftX, dblPad*3 + singlePad)
   }
 }
