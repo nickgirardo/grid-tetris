@@ -2,8 +2,11 @@
 
 export default class Label {
 
-  constructor(text, width=text.length) {
+  constructor(text, width=text.length, x, y) {
     this.redraw = true;
+
+    this.drawX = x;
+    this.drawY = y;
 
     this.width = width;
     this.height = 1;
@@ -13,16 +16,18 @@ export default class Label {
     } else {
       this.text = text.split('').slice(0,width).join('');
     }
-    
+
   }
 
-  draw(domGrid, gridWidth, offsetX=0, offsetY=0) {
+  draw(domGrid, gridWidth) {
     if(!this.redraw)
       return
 
     this.redraw = false;
 
-    const start = (offsetY)*gridWidth + offsetX;
+    const centerX = Math.floor(gridWidth/2);
+
+    const start = (this.drawY)*gridWidth + this.drawX + centerX;
     this.text.split('').forEach((ch, ix) => {
       domGrid[start+ix].className = 'grid-cell';
       domGrid[start+ix].innerText = ch;

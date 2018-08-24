@@ -28,31 +28,47 @@ export default class Manager {
       }
     })();
 
+    this.isGameOver = false;
+
     // Has a piece been held since a piece has fallen?
     // This lets us know if the player can swap with the hold
     this.justHeld = false;
-
-    this.next = new TetrominoDisplay(this.randFromBag());
-    this.hold = new EmptyDisplay(); // Game starts with no pieces held
-
-    this.nextLabel = new Label('NEXT', 5);
-    this.holdLabel = new Label('HOLD', 5);
-
     this.lines = 0;
-    this.linesLabel = new Label('LINES', 5);
-    this.linesDisplay = new Label(this.lines.toString(), 5);
-
     this.score = 0;
-    this.scoreLabel = new Label('SCORE', 5);
-    this.scoreDisplay = new Label(this.score.toString(), 5);
 
     // TODO not hardcoded
-    this.field = new Field(10, 24);
+    this.field = new Field(this, 10, 24, -5, 2);
     this.tetromino = new Tetromino(this, this.field, this.randFromBag());
+
+    this.next = new TetrominoDisplay(this.randFromBag(), 7, 7);
+    this.hold = new EmptyDisplay(-12, 7); // Game starts with no pieces held
+
+    this.linesDisplay = new Label(this.lines.toString(), 5, -12, 3);
+
+    this.scoreDisplay = new Label(this.score.toString(), 5, 7, 3);
+
+    this.scene = [
+      this.field,
+      this.tetromino,
+      this.next,
+      this.hold,
+      this.scoreDisplay,
+      this.linesDisplay,
+    ];
+
+    this.scene.push(new Label('LINES', 5, -12, 2));
+    this.scene.push(new Label('SCORE', 5, 7, 2));
+    this.scene.push(new Label('NEXT', 5, 7, 5));
+    this.scene.push(new Label('HOLD', 5, -12, 5));
+
   }
 
   update() {
-    this.tetromino.update();
+    if(this.isGameOver)
+      return;
+
+    this.scene.filter(e => typeof(e.update) === "function")
+      .forEach(e => e.update());
   }
 
   // TODO needs game over check
@@ -64,16 +80,42 @@ export default class Manager {
 
     if(linesCleared) {
       this.lines += linesCleared;
-      this.linesDisplay = new Label(this.lines.toString(), 5);
+      this.destroy(this.linesDisplay);
+      this.linesDisplay = new Label(this.lines.toString(), 5, this.linesDisplay.drawX, this.linesDisplay.drawY);
+      this.scene.push(this.linesDisplay);
 
       const scoreIncrease = [0, 100, 200, 400, 600];
       this.score += scoreIncrease[linesCleared];
-      this.scoreDisplay = new Label(this.score.toString(), 5);
+      this.destroy(this.scoreDisplay);
+      this.scoreDisplay = new Label(this.score.toString(), 5, this.scoreDisplay.drawX, this.scoreDisplay.drawY);
+      this.scene.push(this.scoreDisplay);
     }
 
+    this.destroy(tetromino);
     this.tetromino = new Tetromino(this, this.field, this.next.type);
+    this.scene.push(this.tetromino);
 
-    this.next = new TetrominoDisplay(this.randFromBag());
+    if(!this.tetromino.positions.every(p => this.field.isOpen(p.x, p.y))) {
+      this.gameOver();
+    }
+
+    this.destroy(this.next);
+    this.next = new TetrominoDisplay(this.randFromBag(), this.next.drawX, this.next.drawY);
+    this.scene.push(this.next);
+  }
+
+  destroy(entity) {
+    const ix = this.scene.indexOf(entity);
+    if(ix === -1) {
+      console.error('Entity not found for deletion');
+      return;
+    }
+    this.scene.splice(ix, 1);
+  }
+
+
+  gameOver() {
+    this.isGameOver = true;
   }
 
   tetrominoHold() {
@@ -82,49 +124,39 @@ export default class Manager {
 
     if(this.hold.isEmpty) {
       // No pieces in the hold, take the next piece
-      this.hold = new TetrominoDisplay(this.tetromino.type);
+
+      this.destroy(this.hold);
+      this.hold = new TetrominoDisplay(this.tetromino.type, this.hold.drawX, this.hold.drawY);
+      this.scene.push(this.hold);
+
+      this.destroy(this.tetromino);
       this.tetromino = new Tetromino(this, this.field, this.next.type);
-      this.next = new TetrominoDisplay(this.randFromBag());
+      this.scene.push(this.tetromino);
+
+      this.destroy(this.next);
+      this.next = new TetrominoDisplay(this.randFromBag(), this.next.drawX, this.next.drawY);
+      this.scene.push(this.next);
     } else {
       const heldType = this.hold.type;
-      this.hold = new TetrominoDisplay(this.tetromino.type);
+      this.destroy(this.hold);
+      this.hold = new TetrominoDisplay(this.tetromino.type, this.hold.drawX, this.hold.drawY);
+      this.scene.push(this.hold);
+
+      this.destroy(this.tetromino);
       this.tetromino = new Tetromino(this, this.field, heldType);
+      this.scene.push(this.tetromino);
     }
 
     this.justHeld = true;
   }
 
   forceRedraw() {
-    this.next.redraw = true;
-    this.hold.redraw = true;
-    this.nextLabel.redraw = true;
-    this.holdLabel.redraw = true;
+    this.scene.filter(e => typeof(e.redraw) === "boolean")
+      .forEach(e => e.redraw = true);
   }
 
   draw(domGrid, gridWidth) {
-    const center = Math.floor(gridWidth / 2);
-    const halfFieldWidth = Math.floor(this.field.width / 2);
-    const fieldX = center - halfFieldWidth;
-    const singlePad = 1;
-    const dblPad = 2;
-
-    const startX = dblPad;
-    //const fieldX = startX;
-    const rightX = center + halfFieldWidth + dblPad;
-    const leftX = center - halfFieldWidth - dblPad - 5;
-
-    // TODO way too many magic numbers
-    this.field.draw(domGrid, gridWidth, fieldX, dblPad);
-    this.tetromino.draw(domGrid, gridWidth, fieldX, dblPad);
-
-    this.scoreLabel.draw(domGrid, gridWidth, rightX, dblPad);
-    this.scoreDisplay.draw(domGrid, gridWidth, rightX, dblPad + singlePad);
-    this.nextLabel.draw(domGrid, gridWidth, rightX, dblPad*2 + singlePad);
-    this.next.draw(domGrid, gridWidth, rightX, dblPad*3 + singlePad);
-
-    this.linesLabel.draw(domGrid, gridWidth, leftX, dblPad);
-    this.linesDisplay.draw(domGrid, gridWidth, leftX, dblPad + singlePad);
-    this.holdLabel.draw(domGrid, gridWidth, leftX, dblPad*2 + singlePad)
-    this.hold.draw(domGrid, gridWidth, leftX, dblPad*3 + singlePad)
+    this.scene.filter(e => typeof(e.draw) === "function")
+      .forEach(e => e.draw(domGrid, gridWidth));
   }
 }

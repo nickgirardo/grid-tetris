@@ -3,7 +3,12 @@ import gridClassNames from "../data/gridClassNames.js";
 
 export default class field {
 
-  constructor(width, height) {
+  constructor(manager, width, height, x, y) {
+    this.manager = manager;
+
+    this.drawX = x;
+    this.drawY = y;
+
     this.width = width;
     this.height = height;
 
@@ -38,10 +43,15 @@ export default class field {
     return rowsCleared;
   }
 
-  draw(domGrid, gridWidth, offsetX=0, offsetY=0) {
+  draw(domGrid, gridWidth) {
+    const tetromino = this.manager.tetromino;
+    const centerX = Math.floor(gridWidth/2);
     for(let i = 0; i<this.height; i++) {
       for(let j = 0; j<this.width; j++) {
-        domGrid[(i+offsetY)*gridWidth + offsetX + j].className = gridClassNames[this.grid[i][j]];
+        // Make sure not to overdraw active tetromino
+        if(tetromino && tetromino.positions.includes({x: j, y: i}))
+          continue;
+        domGrid[(i+this.drawY)*gridWidth + (this.drawX + centerX) + j].className = gridClassNames[this.grid[i][j]];
       }
     }
   }
