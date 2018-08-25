@@ -19,6 +19,7 @@ export default class field {
     }
   }
 
+  // Check for over the top
   isOpen(x, y) {
     return (x >= 0) && (x < this.width) && (y < this.height) && !this.grid[y][x];
   }

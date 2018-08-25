@@ -10,8 +10,13 @@ let GRID_HEIGHT = FIELD_HEIGHT + 4;
 
 const container = document.querySelector('#tetris-container');
 
-const manager = new Manager();
+let manager = new Manager(newGame);
 let cells = [];
+
+function newGame() {
+  manager = new Manager(newGame);
+  resize(true);
+}
 
 function forceRedraw() {
   manager.forceRedraw();
@@ -29,7 +34,7 @@ function update() {
   window.requestAnimationFrame(update);
 }
 
-function resize() {
+function resize(force = false) {
   let windowAspectRatio = window.innerWidth/ window.innerHeight;
 
   container.style.width = window.innerWidth;
@@ -38,7 +43,7 @@ function resize() {
   const newGridWidth = Math.ceil(GRID_HEIGHT * windowAspectRatio);
 
   // On resize, avoid rebuilding the dom if we don't need to
-  if(newGridWidth !== GRID_WIDTH) {
+  if(force || newGridWidth !== GRID_WIDTH) {
     GRID_WIDTH = newGridWidth;
 
     const containerEl = document.querySelector('#tetris-container');

@@ -2,7 +2,7 @@
 
 export default class Label {
 
-  constructor(text, width=text.length, x, y) {
+  constructor(text, x, y, width=text.length) {
     this.redraw = true;
 
     this.drawX = x;

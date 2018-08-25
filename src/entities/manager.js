@@ -1,4 +1,6 @@
 
+import * as Keyboard from "../keyboard.js";
+
 import Tetromino from "./tetromino.js";
 import Field from "./field.js";
 import TetrominoDisplay from "./display.js";
@@ -7,7 +9,7 @@ import Label from "./label.js";
 
 export default class Manager {
 
-  constructor() {
+  constructor(newGame) {
     this.randFromBag = (() => {
       // Fisher-Yates
       function shuffle(arr) {
@@ -28,44 +30,55 @@ export default class Manager {
       }
     })();
 
+    this.newGame = newGame;
     this.isGameOver = false;
 
     // Has a piece been held since a piece has fallen?
     // This lets us know if the player can swap with the hold
     this.justHeld = false;
+    this.level = 1;
+    this.best = 0; // TODO
     this.lines = 0;
     this.score = 0;
 
-    // TODO not hardcoded
+    // TODO not hardcoded?
     this.field = new Field(this, 10, 24, -5, 2);
     this.tetromino = new Tetromino(this, this.field, this.randFromBag());
 
-    this.next = new TetrominoDisplay(this.randFromBag(), 7, 7);
-    this.hold = new EmptyDisplay(-12, 7); // Game starts with no pieces held
+    this.next = new TetrominoDisplay(this.randFromBag(), 7, 10);
+    this.hold = new EmptyDisplay(-12, 10); // Game starts with no pieces held
 
-    this.linesDisplay = new Label(this.lines.toString(), 5, -12, 3);
-
-    this.scoreDisplay = new Label(this.score.toString(), 5, 7, 3);
+    // Dynamic labels
+    this.levelLabel = new Label(this.level.toString(), -12, 3, 5);
+    this.linesLabel = new Label(this.lines.toString(), -12, 6, 5);
+    this.bestLabel = new Label(this.best.toString(), 7, 3, 5);
+    this.scoreLabel = new Label(this.score.toString(), 7, 6, 5);
 
     this.scene = [
       this.field,
       this.tetromino,
       this.next,
       this.hold,
-      this.scoreDisplay,
-      this.linesDisplay,
+      this.levelLabel,
+      this.linesLabel,
+      this.bestLabel,
+      this.scoreLabel,
     ];
 
-    this.scene.push(new Label('LINES', 5, -12, 2));
-    this.scene.push(new Label('SCORE', 5, 7, 2));
-    this.scene.push(new Label('NEXT', 5, 7, 5));
-    this.scene.push(new Label('HOLD', 5, -12, 5));
-
+    // Static labels
+    this.scene.push(new Label('LEVEL', -12, 2, 5));
+    this.scene.push(new Label('LINES', -12, 5, 5));
+    this.scene.push(new Label('BEST', 7, 2, 5));
+    this.scene.push(new Label('SCORE', 7, 5, 5));
+    this.scene.push(new Label('NEXT', 7, 8, 5));
+    this.scene.push(new Label('HOLD', -12, 8, 5));
   }
 
   update() {
-    if(this.isGameOver)
+    if(this.isGameOver) {
+      this.checkNewGame();
       return;
+    }
 
     this.scene.filter(e => typeof(e.update) === "function")
       .forEach(e => e.update());
@@ -80,15 +93,15 @@ export default class Manager {
 
     if(linesCleared) {
       this.lines += linesCleared;
-      this.destroy(this.linesDisplay);
-      this.linesDisplay = new Label(this.lines.toString(), 5, this.linesDisplay.drawX, this.linesDisplay.drawY);
-      this.scene.push(this.linesDisplay);
+      this.destroy(this.linesLabel);
+      this.linesLabel = new Label(this.lines.toString(), this.linesLabel.drawX, this.linesLabel.drawY, 5);
+      this.scene.push(this.linesLabel);
 
       const scoreIncrease = [0, 100, 200, 400, 600];
       this.score += scoreIncrease[linesCleared];
-      this.destroy(this.scoreDisplay);
-      this.scoreDisplay = new Label(this.score.toString(), 5, this.scoreDisplay.drawX, this.scoreDisplay.drawY);
-      this.scene.push(this.scoreDisplay);
+      this.destroy(this.scoreLabel);
+      this.scoreLabel = new Label(this.score.toString(), this.scoreLabel.drawX, this.scoreLabel.drawY, 5);
+      this.scene.push(this.scoreLabel);
     }
 
     this.destroy(tetromino);
@@ -113,9 +126,20 @@ export default class Manager {
     this.scene.splice(ix, 1);
   }
 
-
   gameOver() {
     this.isGameOver = true;
+
+    // TODO update hi score
+
+    this.scene.push(new Label("GAME OVER", -5, 5))
+    this.scene.push(new Label("ENTER TO", -5, 7))
+    this.scene.push(new Label("RESTART", -5, 8))
+  }
+
+  checkNewGame() {
+    // Restart with 'enter' pressed down
+    if(Keyboard.keys[13])
+      this.newGame();
   }
 
   tetrominoHold() {
