@@ -37,7 +37,7 @@ export default class Manager {
     // This lets us know if the player can swap with the hold
     this.justHeld = false;
     this.level = 1;
-    this.best = 0; // TODO
+    this.best = localStorage.getItem('best') || 0;
     this.lines = 0;
     this.score = 0;
 
@@ -93,15 +93,11 @@ export default class Manager {
 
     if(linesCleared) {
       this.lines += linesCleared;
-      this.destroy(this.linesLabel);
-      this.linesLabel = new Label(this.lines.toString(), this.linesLabel.drawX, this.linesLabel.drawY, 5);
-      this.scene.push(this.linesLabel);
 
       const scoreIncrease = [0, 100, 200, 400, 600];
       this.score += scoreIncrease[linesCleared];
-      this.destroy(this.scoreLabel);
-      this.scoreLabel = new Label(this.score.toString(), this.scoreLabel.drawX, this.scoreLabel.drawY, 5);
-      this.scene.push(this.scoreLabel);
+
+      this.updateLabels();
     }
 
     this.destroy(tetromino);
@@ -117,6 +113,22 @@ export default class Manager {
     this.scene.push(this.next);
   }
 
+  updateLabels() {
+    this.destroy(this.linesLabel);
+    this.linesLabel = new Label(this.lines.toString(), this.linesLabel.drawX, this.linesLabel.drawY, 5);
+    this.scene.push(this.linesLabel);
+
+    this.destroy(this.scoreLabel);
+    this.scoreLabel = new Label(this.score.toString(), this.scoreLabel.drawX, this.scoreLabel.drawY, 5);
+    this.scene.push(this.scoreLabel);
+
+    if(this.score > this.best) {
+      this.destroy(this.bestLabel);
+      this.bestLabel = new Label(this.score.toString(), this.bestLabel.drawX, this.bestLabel.drawY, 5);
+      this.scene.push(this.bestLabel);
+    }
+  }
+
   destroy(entity) {
     const ix = this.scene.indexOf(entity);
     if(ix === -1) {
@@ -129,7 +141,8 @@ export default class Manager {
   gameOver() {
     this.isGameOver = true;
 
-    // TODO update hi score
+    if(this.score > this.best)
+      localStorage.setItem('best', this.score);
 
     this.scene.push(new Label("GAME OVER", -5, 5))
     this.scene.push(new Label("ENTER TO", -5, 7))
