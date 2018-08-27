@@ -117,9 +117,17 @@ export default class Tetromino {
   }
 
   canSlide() {
-    console.log(this.hasMoved, this.slideFrames, this.slideCap);
-    console.log(this.hasMoved && (this.slideFrames < this.slideCap));
     return this.hasMoved && (this.slideFrames < this.slideCap);
+  }
+
+  // This is the amount of frames between the tetromino falling a block
+  fallSpeed(level) {
+    const speeds = [56, 47, 39, 32, 26, 21, 17, 14, 12];
+    const baseSpeed = 20;
+    if(level < speeds.length)
+      return speeds[level];
+    else
+      return baseSpeed - level;
   }
 
   fall() {
@@ -174,15 +182,13 @@ export default class Tetromino {
 
     // Soft drop
     if(Keyboard.keys[83]) {
-      // TODO Tune this amount to get it feeling right
       this.lastFall += 20;
     }
 
 
     // Advance piece
     this.lastFall++;
-    // TODO this value will be adjusted by level
-    if(this.lastFall > 30) {
+    if(this.lastFall > this.fallSpeed(this.manager.level)) {
       this.lastFall = 0;
       if(this.canFall()) {
         this.fall();

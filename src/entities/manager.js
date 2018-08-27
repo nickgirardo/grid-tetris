@@ -97,6 +97,8 @@ export default class Manager {
       const scoreIncrease = [0, 100, 200, 400, 600];
       this.score += scoreIncrease[linesCleared];
 
+      this.level = Math.floor(this.lines / 10) + 1;
+
       this.updateLabels();
     }
 
@@ -117,6 +119,10 @@ export default class Manager {
     this.destroy(this.linesLabel);
     this.linesLabel = new Label(this.lines.toString(), this.linesLabel.drawX, this.linesLabel.drawY, 5);
     this.scene.push(this.linesLabel);
+
+    this.destroy(this.levelLabel);
+    this.levelLabel = new Label(this.level.toString(), this.levelLabel.drawX, this.levelLabel.drawY, 5);
+    this.scene.push(this.levelLabel);
 
     this.destroy(this.scoreLabel);
     this.scoreLabel = new Label(this.score.toString(), this.scoreLabel.drawX, this.scoreLabel.drawY, 5);
