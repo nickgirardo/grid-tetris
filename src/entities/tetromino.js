@@ -35,6 +35,11 @@ export default class Tetromino {
     this.rotation = 0;
     this.lastFall = 0;
 
+    // Sliding effect
+    this.slideCap = 90;
+    this.slideFrames = 0;
+    this.hasMoved = true;
+
     this.lastLeft = Keyboard.timestamps[65] || Date.now();
     this.lastRight = Keyboard.timestamps[68] || Date.now();
     this.lastUp = Keyboard.timestamps[87] || Date.now();
@@ -87,6 +92,9 @@ export default class Tetromino {
 
   moveLeft() {
     this.shift(-1, 0);
+
+    // This is for determining wether a tetromino should continue sliding
+    this.hasMoved = true;
   }
 
   canMoveRight(amount = 1) {
@@ -97,6 +105,9 @@ export default class Tetromino {
 
   moveRight() {
     this.shift(1, 0);
+
+    // This is for determining wether a tetromino should continue sliding
+    this.hasMoved = true;
   }
 
   canFall() {
@@ -105,11 +116,27 @@ export default class Tetromino {
       .every(a=>a));
   }
 
+  canSlide() {
+    console.log(this.hasMoved, this.slideFrames, this.slideCap);
+    console.log(this.hasMoved && (this.slideFrames < this.slideCap));
+    return this.hasMoved && (this.slideFrames < this.slideCap);
+  }
+
   fall() {
     this.shift(0, 1);
   }
 
   update() {
+
+    // Sliding effect
+    // slideCap limits the amount of frames for which a tetromino can be sliding
+    // slideFrames approaches that value whenever the tetromino is grounded
+    if(this.canFall()) {
+      // If we aren't on something solid, reset the amount of frames we've been sliding for
+      this.slideFrames = 0;
+    } else {
+      this.slideFrames++;
+    }
 
     // Attempts to swap with held piece
     // Will fail if a piece has just been held
@@ -142,7 +169,7 @@ export default class Tetromino {
       while(this.canFall()) {
         this.fall();
       }
-      this.lastFall = Infinity;
+      this.manager.tetrominoLands(this);
     }
 
     // Soft drop
@@ -154,10 +181,13 @@ export default class Tetromino {
 
     // Advance piece
     this.lastFall++;
+    // TODO this value will be adjusted by level
     if(this.lastFall > 30) {
       this.lastFall = 0;
       if(this.canFall()) {
         this.fall();
+      } else if(this.canSlide()) {
+        this.hasMoved = false;
       } else {
         this.manager.tetrominoLands(this);
       }
