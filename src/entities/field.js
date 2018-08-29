@@ -3,7 +3,7 @@ import gridClassNames from "../data/gridClassNames.js";
 
 export default class field {
 
-  constructor(manager, width, height, x, y) {
+  constructor(manager, width, height, hidden, x, y) {
     this.manager = manager;
 
     this.drawX = x;
@@ -11,6 +11,9 @@ export default class field {
 
     this.width = width;
     this.height = height;
+
+    // This is the amount of rows hidden at the top of the field
+    this.hidden = hidden;
 
     this.grid = [];
 
@@ -21,7 +24,7 @@ export default class field {
 
   // Check for over the top
   isOpen(x, y) {
-    return (x >= 0) && (x < this.width) && (y < this.height) && !this.grid[y][x];
+    return (x >= 0) && (y >= 0) && (x < this.width) && (y < this.height) && !this.grid[y][x];
   }
 
   addTetromino(tetromino) {
@@ -44,15 +47,29 @@ export default class field {
     return rowsCleared;
   }
 
+  drawTetromino(tetromino, domGrid, gridWidth) {
+    const centerX = Math.floor(gridWidth/2);
+    tetromino.positions.forEach(p => {
+      // Don't draw tetromino pieces above the hidden part of field
+      if(p.y < this.hidden)
+        return;
+      const drawTarget =
+        (p.y+tetromino.field.drawY-this.hidden)*gridWidth // Y component
+        + (tetromino.field.drawX + centerX + p.x); // X component
+      if(0 <= drawTarget && drawTarget < domGrid.length)
+        domGrid[drawTarget].className = tetromino.className;
+    });
+  }
+
   draw(domGrid, gridWidth) {
     const tetromino = this.manager.tetromino;
     const centerX = Math.floor(gridWidth/2);
-    for(let i = 0; i<this.height; i++) {
+    for(let i = this.hidden; i<this.height; i++) {
       for(let j = 0; j<this.width; j++) {
         // Make sure not to overdraw active tetromino
         if(tetromino && tetromino.positions.includes({x: j, y: i}))
           continue;
-        domGrid[(i+this.drawY)*gridWidth + (this.drawX + centerX) + j].className = gridClassNames[this.grid[i][j]];
+        domGrid[(i+this.drawY-this.hidden)*gridWidth + (this.drawX + centerX) + j].className = gridClassNames[this.grid[i][j]];
       }
     }
   }

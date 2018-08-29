@@ -42,7 +42,7 @@ export default class Manager {
     this.score = 0;
 
     // TODO not hardcoded?
-    this.field = new Field(this, 10, 24, -5, 2);
+    this.field = new Field(this, 10, 26, 2, -5, 2);
     this.tetromino = new Tetromino(this, this.field, this.randFromBag());
 
     this.next = new TetrominoDisplay(this.randFromBag(), 7, 10);
@@ -84,8 +84,14 @@ export default class Manager {
       .forEach(e => e.update());
   }
 
-  // TODO needs game over check
   tetrominoLands(tetromino) {
+    // If any of the pieces of the landed tetromino are in the hidden
+    // area of the field, the game is over!!
+    if(!tetromino.positions.every(p => p.y > this.field.hidden)) {
+      this.gameOver();
+      return;
+    }
+
     this.justHeld = false;
 
     this.field.addTetromino(tetromino);
@@ -105,10 +111,6 @@ export default class Manager {
     this.destroy(tetromino);
     this.tetromino = new Tetromino(this, this.field, this.next.type);
     this.scene.push(this.tetromino);
-
-    if(!this.tetromino.positions.every(p => this.field.isOpen(p.x, p.y))) {
-      this.gameOver();
-    }
 
     this.destroy(this.next);
     this.next = new TetrominoDisplay(this.randFromBag(), this.next.drawX, this.next.drawY);

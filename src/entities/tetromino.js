@@ -201,12 +201,7 @@ export default class Tetromino {
   }
 
   draw(domGrid, gridWidth) {
-    const centerX = Math.floor(gridWidth/2);
-    this.positions.forEach(p => {
-      const drawTarget = (p.y+this.field.drawY)*gridWidth + (this.field.drawX + centerX + p.x);
-      if(0 <= drawTarget && drawTarget < domGrid.length)
-        domGrid[drawTarget].className = this.className;
-    });
+    this.field.drawTetromino(this, domGrid, gridWidth);
   }
 
 }
