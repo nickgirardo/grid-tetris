@@ -5,5 +5,9 @@
 # mac os bs
 *.DS_Store
 
-#
+# external libs
 node_modules
+
+# output from publishing
+build
+bundle.*
