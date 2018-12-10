@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "webpack -p",
     "start:dev": "webpack-dev-server"
   },
   "author": "",
