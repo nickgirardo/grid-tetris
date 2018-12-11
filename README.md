@@ -3,6 +3,16 @@ Tetris with display handled through [CSS grid](https://developer.mozilla.org/en-
 
 [Play here!](https://nickgirardo.github.io/grid-tetris/)
 
+Key|Function
+---|--------
+A| Move left
+D| Move right
+W| Hard drop
+S| Soft drop
+Space| Hold piece
+
+### About and Motivation
+
 The CSS Grid is a relatively new layout system, supported by all major browsers except Internet Explorer.
 When reading about the grid, it occured to me that it would be pretty simple to use it as a sort of display layer for a game in the style of retro consoles.
 It is possible to easily change the apperance of tiles by simply changing the class of the associated grid element.
