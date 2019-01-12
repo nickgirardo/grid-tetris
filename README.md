@@ -10,6 +10,8 @@ D| Move right
 W| Hard drop
 S| Soft drop
 Space| Hold piece
+J| Rotate CW
+K| Rotate CCW
 
 ### About and Motivation
 
