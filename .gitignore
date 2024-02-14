@@ -8,6 +8,7 @@
 # external libs
 node_modules
 
-# output from publishing
+# output from building
 dist
 bundle.*
+result
