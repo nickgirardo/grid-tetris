@@ -9,5 +9,5 @@
 node_modules
 
 # output from publishing
-build
+dist
 bundle.*
